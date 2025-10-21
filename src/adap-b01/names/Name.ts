@@ -1,3 +1,5 @@
+import * as string_decoder from "node:string_decoder";
+
 export const DEFAULT_DELIMITER: string = '.';
 export const ESCAPE_CHARACTER = '\\';
 
@@ -13,14 +15,20 @@ export const ESCAPE_CHARACTER = '\\';
  * "///" is a name with four empty components and the delimiter character '/'.
  * "Oh\.\.\." is a name with one component, if the delimiter character is '.'.
  */
-export class Name {
+export class Name
+{
 
     private delimiter: string = DEFAULT_DELIMITER;
     private components: string[] = [];
 
     /** Expects that all Name components are properly masked */
-    constructor(other: string[], delimiter?: string) {
-        throw new Error("needs implementation or deletion");
+    constructor(other: string[], delimiter?: string)
+    {
+        this.components = other;
+        if (delimiter != undefined)
+        {
+            this.delimiter = delimiter;
+        }
     }
 
     /**
@@ -28,8 +36,21 @@ export class Name {
      * Special characters are not escaped (creating a human-readable string)
      * Users can vary the delimiter character to be used
      */
-    public asString(delimiter: string = this.delimiter): string {
-        throw new Error("needs implementation or deletion");
+    public asString(delimiter: string = this.delimiter): string
+    {
+        let output: string = ""
+        let x: number = 0
+
+        for(x = 0; x < this.getNoComponents(); x++)
+        {
+
+            output = output.concat(this.getComponent(x))
+            if(x != this.getNoComponents()-1)
+            {
+                output = output.concat(delimiter)
+            }
+        }
+        return output
     }
 
     /** 
@@ -37,36 +58,62 @@ export class Name {
      * Machine-readable means that from a data string, a Name can be parsed back in
      * The special characters in the data string are the default characters
      */
-    public asDataString(): string {
-        throw new Error("needs implementation or deletion");
+    public asDataString(): string
+    {
+        let delimiter: string = DEFAULT_DELIMITER;
+
+        let output: string = ""
+        let x: number = 0
+
+        for(x = 0; x < this.getNoComponents(); x++)
+        {
+            let currentComponent: string = this.getComponent(x)
+
+            currentComponent = currentComponent.replaceAll(ESCAPE_CHARACTER, ESCAPE_CHARACTER.concat(ESCAPE_CHARACTER))
+
+            currentComponent = currentComponent.replaceAll(DEFAULT_DELIMITER, ESCAPE_CHARACTER.concat(DEFAULT_DELIMITER))
+
+            output = output.concat(currentComponent)
+            if(x != this.getNoComponents()-1)
+            {
+                output = output.concat(DEFAULT_DELIMITER)
+            }
+        }
+        return output
     }
 
-    public getComponent(i: number): string {
-        throw new Error("needs implementation or deletion");
+    public getComponent(i: number): string
+    {
+        return this.components[i];
     }
 
     /** Expects that new Name component c is properly masked */
-    public setComponent(i: number, c: string): void {
-        throw new Error("needs implementation or deletion");
+    public setComponent(i: number, c: string): void
+    {
+        this.components[i] = c;
     }
 
      /** Returns number of components in Name instance */
-     public getNoComponents(): number {
-        throw new Error("needs implementation or deletion");
+     public getNoComponents(): number
+     {
+        return this.components.length;
+     }
+
+    /** Expects that new Name component c is properly masked */
+    public insert(i: number, c: string): void
+    {
+        this.components.splice(i,0,c)
     }
 
     /** Expects that new Name component c is properly masked */
-    public insert(i: number, c: string): void {
-        throw new Error("needs implementation or deletion");
+    public append(c: string): void
+    {
+        this.components.push(c);
     }
 
-    /** Expects that new Name component c is properly masked */
-    public append(c: string): void {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public remove(i: number): void {
-        throw new Error("needs implementation or deletion");
+    public remove(i: number): void
+    {
+        this.components.splice(i,1)
     }
 
 }
