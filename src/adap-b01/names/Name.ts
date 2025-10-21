@@ -84,12 +84,14 @@ export class Name
 
     public getComponent(i: number): string
     {
+        if (i < 0 || i >= this.getNoComponents()) throw new Error("Index out of bounds");
         return this.components[i];
     }
 
     /** Expects that new Name component c is properly masked */
     public setComponent(i: number, c: string): void
     {
+        if (i < 0 || i >= this.getNoComponents()) throw new Error("Index out of bounds");
         this.components[i] = c;
     }
 
@@ -102,6 +104,7 @@ export class Name
     /** Expects that new Name component c is properly masked */
     public insert(i: number, c: string): void
     {
+        if (i < 0 || i > this.getNoComponents()) throw new Error("Index out of bounds");
         this.components.splice(i,0,c)
     }
 
@@ -113,6 +116,7 @@ export class Name
 
     public remove(i: number): void
     {
+        if (i < 0 || i >= this.getNoComponents()) throw new Error("Index out of bounds");
         this.components.splice(i,1)
     }
 
