@@ -22,6 +22,7 @@ export class StringArrayName implements Name {
         return this.components.join(delimiter);
     }
 
+
     public asDataString(): string
     {
         const regex = new RegExp(`(?<!\\\\)\\${DEFAULT_DELIMITER}`, "g");
