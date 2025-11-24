@@ -7,65 +7,59 @@ export class StringName extends AbstractName {
     protected name: string = "";
     protected noComponents: number = 0;
 
-    constructor(source: string, delimiter?: string) {
-        super();
-        throw new Error("needs implementation or deletion");
+    constructor(source: string, delimiter?: string)
+    {
+        super(delimiter);
+        this.name = source;
+
+        const esc = ESCAPE_CHARACTER;
+        const delim = this.delimiter;
+
+        const regex = new RegExp(`(?<!\\\\${esc})\\${delim}`, "g");
+
+        this.noComponents = source.split(regex).length;
     }
 
-    public clone(): Name {
-        throw new Error("needs implementation or deletion");
+    public getNoComponents(): number
+    {
+        return this.noComponents
     }
 
-    public asString(delimiter: string = this.delimiter): string {
-        throw new Error("needs implementation or deletion");
+    public getComponent(x: number): string
+    {
+        const regex = new RegExp(`(?<!\\\\)\\${this.getDelimiterCharacter()}`);
+        return this.name.split(regex)[x];
     }
 
-    public asDataString(): string {
-        throw new Error("needs implementation or deletion");
+    public setComponent(n: number, c: string): void
+    {
+        const regex = new RegExp(`(?<!\\\\)\\${this.getDelimiterCharacter()}`);
+        const array = this.name.split(regex);
+        array[n] = c;
+        this.name = array.join(this.delimiter);
     }
 
-    public isEqual(other: Name): boolean {
-        throw new Error("needs implementation or deletion");
+    public insert(n: number, c: string): void
+    {
+        const regex = new RegExp(`(?<!\\\\)\\${this.getDelimiterCharacter()}`);
+        let array = this.name.split(regex);
+        array.splice(n, 0, c);
+        this.name = array.join(this.delimiter);
+        this.noComponents += 1;
     }
 
-    public getHashCode(): number {
-        throw new Error("needs implementation or deletion");
+    public append(c: string): void
+    {
+        this.name += this.delimiter + c;
+        this.noComponents += 1;
     }
 
-    public isEmpty(): boolean {
-        throw new Error("needs implementation or deletion");
+    public remove(n: number): void
+    {
+        const regex = new RegExp(`(?<!\\\\)\\${this.getDelimiterCharacter()}`);
+        let array = this.name.split(regex);
+        array.splice(n, 1);
+        this.name = array.join(this.delimiter);
+        this.noComponents -= 1;
     }
-
-    public getDelimiterCharacter(): string {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public getNoComponents(): number {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public getComponent(i: number): string {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public setComponent(i: number, c: string) {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public insert(i: number, c: string) {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public append(c: string) {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public remove(i: number) {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public concat(other: Name): void {
-        throw new Error("needs implementation or deletion");
-    }
-
 }
