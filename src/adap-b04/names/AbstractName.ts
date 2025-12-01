@@ -5,40 +5,80 @@ export abstract class AbstractName implements Name {
 
     protected delimiter: string = DEFAULT_DELIMITER;
 
-    constructor(delimiter: string = DEFAULT_DELIMITER) {
-        throw new Error("needs implementation or deletion");
+    constructor(delimiter: string = DEFAULT_DELIMITER)
+    {
+        if(delimiter != null)
+        {
+            this.delimiter = delimiter
+        }
     }
 
-    public clone(): Name {
-        throw new Error("needs implementation or deletion");
+    public clone(): Name
+    {
+        return Object.create(this);
     }
 
-    public asString(delimiter: string = this.delimiter): string {
-        throw new Error("needs implementation or deletion");
+    public asString(delimiter: string = this.delimiter): string
+    {
+        const components = [];
+        for (let i = 0; i < this.getNoComponents(); i++)
+        {
+            components.push(this.getComponent(i))
+        }
+
+        const regex = new RegExp(`(?<!\\\\)\\${DEFAULT_DELIMITER}`, "g");
+        return components.map(c => c.replaceAll(regex, ESCAPE_CHARACTER + DEFAULT_DELIMITER)).join(DEFAULT_DELIMITER);
     }
 
     public toString(): string {
         return this.asDataString();
     }
 
-    public asDataString(): string {
-        throw new Error("needs implementation or deletion");
+    public asDataString(): string
+    {
+        const out: string[] = [];
+        for (let i = 0; i < this.getNoComponents(); i++) {
+            let comp = this.getComponent(i) ?? "";
+
+            if (ESCAPE_CHARACTER) {
+                comp = comp.replaceAll(ESCAPE_CHARACTER, ESCAPE_CHARACTER + ESCAPE_CHARACTER);
+            }
+            if (this.delimiter) {
+                comp = comp.replaceAll(this.delimiter, ESCAPE_CHARACTER + this.delimiter);
+            }
+            out.push(comp);
+        }
+        return out.join(this.delimiter);
     }
 
-    public isEqual(other: Name): boolean {
-        throw new Error("needs implementation or deletion");
+    public isEqual(other: Name): boolean
+    {
+        return this.asDataString() === other.asDataString() && this.getDelimiterCharacter() === other.getDelimiterCharacter();
     }
 
-    public getHashCode(): number {
-        throw new Error("needs implementation or deletion");
+    public getHashCode(): number
+    {
+        const s = this.asDataString();
+        let h = 0;
+        for (let i = 0; i < s.length; i++) {
+            h = ((h << 5) - h) + s.charCodeAt(i);
+            h |= 0;
+        }
+        return h >>> 0;
     }
 
-    public isEmpty(): boolean {
-        throw new Error("needs implementation or deletion");
+    public isEmpty(): boolean
+    {
+        if (this.getNoComponents() == 0)
+        {
+            return true
+        }
+        return false
     }
 
-    public getDelimiterCharacter(): string {
-        throw new Error("needs implementation or deletion");
+    public getDelimiterCharacter(): string
+    {
+        return this.delimiter
     }
 
     abstract getNoComponents(): number;
@@ -50,8 +90,12 @@ export abstract class AbstractName implements Name {
     abstract append(c: string): void;
     abstract remove(i: number): void;
 
-    public concat(other: Name): void {
-        throw new Error("needs implementation or deletion");
+    public concat(other: Name): void
+    {
+        const n = other.getNoComponents();
+        for (let i = 0; i < n; i++) {
+            this.append(other.getComponent(i));
+        }
     }
 
 }
