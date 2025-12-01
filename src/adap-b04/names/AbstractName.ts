@@ -1,5 +1,6 @@
 import { DEFAULT_DELIMITER, ESCAPE_CHARACTER } from "../common/Printable";
 import { Name } from "./Name";
+import {IllegalArgumentException} from "../common/IllegalArgumentException";
 
 export abstract class AbstractName implements Name {
 
@@ -7,10 +8,11 @@ export abstract class AbstractName implements Name {
 
     constructor(delimiter: string = DEFAULT_DELIMITER)
     {
-        if(delimiter != null)
-        {
-            this.delimiter = delimiter
-        }
+        IllegalArgumentException.assert(
+             delimiter.length === 1, "Delim size not 1"
+        );
+        this.delimiter = delimiter
+
     }
 
     public clone(): Name
@@ -92,6 +94,7 @@ export abstract class AbstractName implements Name {
 
     public concat(other: Name): void
     {
+        IllegalArgumentException.assert(other != null, "Other cant be null")
         const n = other.getNoComponents();
         for (let i = 0; i < n; i++) {
             this.append(other.getComponent(i));
